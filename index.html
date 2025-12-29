@@ -1,69 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Password Generator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #0f172a;
-            color: #e5e7eb;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .box {
-            background: #020617;
-            padding: 30px;
-            border-radius: 10px;
-            width: 350px;
-            text-align: center;
-        }
-        input {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            border: none;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #1d4ed8;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Password Generator</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #020617;
+        overflow: hidden;
+    }
+
+    canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: -1;
+    }
+
+    .container {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .box {
+        background: rgba(2, 6, 23, 0.9);
+        padding: 30px;
+        border-radius: 12px;
+        width: 350px;
+        text-align: center;
+        color: #e5e7eb;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        margin-bottom: 15px;
+        border-radius: 6px;
+        border: none;
+        text-align: center;
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #1d4ed8;
+    }
+</style>
 </head>
+
 <body>
 
-<div class="box">
-    <h2>Password Generator</h2>
-    <input type="text" id="password" readonly>
-    <button onclick="generatePassword()">Generate Password</button>
+<canvas id="bg"></canvas>
+
+<div class="container">
+    <div class="box">
+        <h2>Password Generator</h2>
+        <input type="text" id="password" readonly>
+        <button onclick="generatePassword()">Generate Password</button>
+    </div>
 </div>
 
 <script>
+/* PASSWORD GENERATOR */
 function generatePassword() {
     const length = 16;
-    const chars = 
+    const chars =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
     let password = "";
 
     for (let i = 0; i < length; i++) {
-        const randomIndex = Math.floor(Math.random() * chars.length);
-        password += chars[randomIndex];
+        password += chars[Math.floor(Math.random() * chars.length)];
     }
-
     document.getElementById("password").value = password;
 }
+
+/* BACKGROUND PARTICLES */
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const particles = [];
+const particleCount = 120;
+
+class Particle {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.radius = Math.random() * 1.5 + 0.5;
+        this.vx = (Math.random() - 0.5) * 0.4;
+        this.vy = (Math.random() - 0.5) * 0.4;
+    }
+
+    move() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+    }
+
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(147, 197, 253, 0.8)";
+        ctx.fill();
+    }
+}
+
+for (let i = 0; i < particleCount; i++) {
+    particles.push(new Particle());
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+        p.move();
+        p.draw();
+    });
+    requestAnimationFrame(animate);
+}
+
+animate();
+
+window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
 </script>
 
 </body>
