@@ -10,6 +10,7 @@ It allows users to generate strong random passwords with a single click.
 - Uses uppercase, lowercase, numbers, and special characters
 - Clean and responsive UI
 - Runs fully in the browser (no backend required)
+- Animated particle background using HTML Canvas
 
 ---
 
